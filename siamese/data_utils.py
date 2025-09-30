@@ -10,6 +10,7 @@ import torch
 from torch.utils.data import Subset
 from torch.utils.data import Dataset
 import random
+import copy
 
 def get_full_cifar100(root="data"):
     """

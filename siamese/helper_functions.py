@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt # CIFAR-100 normalization stats
+import copy
 
 MEAN = torch.tensor([0.4914, 0.4822, 0.4465])
 STD = torch.tensor([0.2023, 0.1994, 0.2010])
