@@ -60,13 +60,15 @@ class SiameseResNet(nn.Module):
     def forward_once(self, x):
         x = self.encoder(x)
         x = torch.flatten(x, 1)
-        return self.fc(x)
+        x = self.fc(x)
+        return x
 
     def forward(self, x1, x2):
         e1 = self.forward_once(x1)
         e2 = self.forward_once(x2)
         z = torch.abs(e1 - e2)
-        return self.classifier(z)
+        z = self.classifier(z)
+        return z
 
     def summary(self, input_size=(32, 3, 224, 224), verbose=1):
         """
