@@ -31,7 +31,7 @@ def set_seeds(seed: int=42):
 def create_writer(log_dir: str,
                   experiment_name: str, 
                   model_name: str, 
-                  extra: str=None) -> torch.utils.tensorboard.writer.SummaryWriter():
+                  extra: str=None) :
     """Creates a torch.utils.tensorboard.writer.SummaryWriter() instance saving to a specific log_dir.
 
     log_dir is a combination of runs/timestamp/experiment_name/model_name/extra.
