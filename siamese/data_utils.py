@@ -102,10 +102,7 @@ def get_seen_unseen_datasets(full_dataset, num_seen=90):
     seen_dataset = Subset(full_dataset, seen_indices)
     unseen_dataset = Subset(full_dataset, unseen_indices)
 
-    # Debug info
-    print(f"Full dataset size: {len(full_dataset)}")
-    print(f"Seen dataset size: {len(seen_dataset)} (classes: {len(seen_classes)})")
-    print(f"Unseen dataset size: {len(unseen_dataset)} (classes: {len(unseen_classes)})")
+
 
     return seen_dataset, unseen_dataset
 
