@@ -3,12 +3,9 @@ import torch
 import torchvision
 from torch import nn
 from torchvision import transforms
-try:
-    from torch.utils.tensorboard import SummaryWriter
-except:
-    print("[INFO] Couldn't find tensorboard... installing it.")
-    !pip install -q tensorboard
-    from torch.utils.tensorboard import SummaryWriter
+
+from torch.utils.tensorboard import SummaryWriter
+
 
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
@@ -31,7 +28,8 @@ def set_seeds(seed: int=42):
     # Set the seed for CUDA torch operations (ones that happen on the GPU)
     torch.cuda.manual_seed(seed)
 
-def create_writer(experiment_name: str, 
+def create_writer(log_dir: str,
+                  experiment_name: str, 
                   model_name: str, 
                   extra: str=None) -> torch.utils.tensorboard.writer.SummaryWriter():
     """Creates a torch.utils.tensorboard.writer.SummaryWriter() instance saving to a specific log_dir.
@@ -64,9 +62,9 @@ def create_writer(experiment_name: str,
 
     if extra:
         # Create log directory path
-        log_dir = os.path.join("runs", timestamp, experiment_name, model_name, extra)
+        log_dir = os.path.join(log_dir, timestamp, experiment_name, model_name, extra)
     else:
-        log_dir = os.path.join("runs", timestamp, experiment_name, model_name)
+        log_dir = os.path.join(log_dir, timestamp, experiment_name, model_name)
         
     print(f"[INFO] Created SummaryWriter, saving to: {log_dir}...")
     return SummaryWriter(log_dir=log_dir)
@@ -175,3 +173,5 @@ def train(model, train_loader, valid_loader, optimizer, loss_fn, device,
 
 
     return history, model
+
+
