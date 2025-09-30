@@ -146,7 +146,7 @@ def train(model, train_loader, valid_loader, optimizer, loss_fn, device,
         if writer is not None:
             writer.add_scalars("Loss", {"train": train_loss, "val": val_loss}, global_step=epoch)
             writer.add_scalars("Accuracy", {"train": train_acc, "val": val_acc}, global_step=epoch)
-            writer.close()
+            
 
         # Early stopping
         if val_loss < best_val_loss:
@@ -163,7 +163,8 @@ def train(model, train_loader, valid_loader, optimizer, loss_fn, device,
 
     # Load best weights
     model.load_state_dict(best_model_wts)
-
+    if writer is not None:
+        writer.close()
 
     return history, model
 
