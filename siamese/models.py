@@ -1,12 +1,9 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
-try:
-    from torchinfo import summary
-except:
-    print("[INFO] Couldn't find torchinfo... installing it.")
-    !pip install -q torchinfo
-    from torchinfo import summary
+from torchinfo import summary
+
+
 class SiameseResNet(nn.Module):
     """
     Siamese network with ResNet18 backbone.
