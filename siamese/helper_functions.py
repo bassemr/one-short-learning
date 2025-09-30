@@ -1,9 +1,12 @@
 import torch
-import matplotlib.pyplot as plt # CIFAR-100 normalization stats
+import matplotlib.pyplot as plt 
 import copy
+import torch.nn.functional as F
+import torchvision
 
 MEAN = torch.tensor([0.4914, 0.4822, 0.4465])
 STD = torch.tensor([0.2023, 0.1994, 0.2010])
+
 
 def unnormalize(img):
     """Unnormalize a CIFAR-100 image tensor to [0,1]."""
@@ -43,3 +46,71 @@ def visualize_pairs(loader, n=5, title="Image Pairs"):
 
     plt.suptitle(title)
     plt.show()
+
+
+
+
+
+def show_query_support_probabilities(model, test_dataset, device="cpu"):
+    """
+    Display each query image along with all support images and their similarity probabilities.
+    The support with highest similarity is colored green if it matches query label, red if not.
+    """
+    model.eval()
+    with torch.no_grad():
+        episode = test_dataset[0]  # single episode
+        support_images = episode["support_images"].to(device)   # [K, C, H, W]
+        support_labels = episode["support_labels"].to(device)   # [K]
+        query_images = episode["query_images"].to(device)       # [Q, C, H, W]
+        query_labels = episode["query_labels"].to(device)       # [Q]
+
+        # Compute embeddings
+        support_embs = model.forward_once(support_images)       # [K, embedding_dim]
+        query_embs = model.forward_once(query_images)           # [Q, embedding_dim]
+
+        # Compute cosine similarity
+        sims = F.cosine_similarity(
+            query_embs.unsqueeze(1),      # [Q,1,D]
+            support_embs.unsqueeze(0),    # [1,K,D]
+            dim=2
+        )  # [Q, K]
+
+        # Normalize similarity to [0,1] for display
+        sims_min, sims_max = sims.min(), sims.max()
+        probs = (sims - sims_min) / (sims_max - sims_min)
+
+        # Display each query image
+        for i in range(query_images.size(0)):
+            q_img = unnormalize(query_images[i].cpu())
+            q_label = query_labels[i].item()
+            q_probs = probs[i].cpu()
+
+            # Identify the most similar support
+            best_idx = torch.argmax(sims[i]).item()
+            best_label = support_labels[best_idx].item()
+            correct = (best_label == q_label)
+
+            plt.figure(figsize=(12, 3))
+            # Query image
+            plt.subplot(1, support_images.size(0)+1, 1)
+            plt.imshow(torch.permute(q_img, (1,2,0)))
+            plt.title(f"Query\nLabel: {q_label}")
+            plt.axis('off')
+
+            # Support images with similarity probability
+            for j in range(support_images.size(0)):
+                s_img = unnormalize(support_images[j].cpu())
+                s_label = support_labels[j].item()
+                plt.subplot(1, support_images.size(0)+1, j+2)
+                plt.imshow(torch.permute(s_img, (1,2,0)))
+
+                # Color title
+                if j == best_idx:
+                    color = 'green' if correct else 'red'
+                else:
+                    color = 'black'
+
+                plt.title(f"S{j}\nLabel:{s_label}\nProb:{q_probs[j]:.2f}", color=color)
+                plt.axis('off')
+
+            plt.show()
