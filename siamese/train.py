@@ -1,16 +1,14 @@
+import copy
 import matplotlib.pyplot as plt
 import torch
 import torchvision
 from torch import nn
 from torchvision import transforms
-
 from torch.utils.tensorboard import SummaryWriter
-
-import copy
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 
-# Create a writer with all default settings
+
 
 
 
