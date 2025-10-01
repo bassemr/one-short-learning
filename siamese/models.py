@@ -3,7 +3,7 @@ import torch.nn as nn
 import torchvision.models as models
 from torchinfo import summary
 import copy
-
+import torch.nn.functional as F
 
 class SiameseResNet(nn.Module):
     """
@@ -79,7 +79,7 @@ class SiameseResNet(nn.Module):
             input_size (tuple): Expected input size (batch, channels, height, width).
             verbose (int): 0 = silent, 1 = layer-wise details.
         """
-        summary(self, 
+        return summary(self, 
                 input_size=[(input_size), (input_size)],  # since we pass two inputs
                 verbose=verbose,
                 col_names=["input_size", "output_size", "num_params", "trainable"],
