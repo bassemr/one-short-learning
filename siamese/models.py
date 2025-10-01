@@ -79,12 +79,12 @@ class SiameseResNet(nn.Module):
             input_size (tuple): Expected input size (batch, channels, height, width).
             verbose (int): 0 = silent, 1 = layer-wise details.
         """
-        return summary(self, 
-                       input_size=[(input_size), (input_size)],  # since we pass two inputs
-                       verbose=verbose,
-                       col_names=["input_size", "output_size", "num_params", "trainable"],
-                       col_width=20,
-                       row_settings=["var_names"])
+        summary(self, 
+                input_size=[(input_size), (input_size)],  # since we pass two inputs
+                verbose=verbose,
+                col_names=["input_size", "output_size", "num_params", "trainable"],
+                col_width=20,
+                row_settings=["var_names"])
 
 
 
