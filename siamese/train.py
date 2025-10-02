@@ -8,6 +8,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 from pathlib import Path
+import torch.nn.functional as F
 
 
 # Set seeds
@@ -202,3 +203,37 @@ def save_model(model: torch.nn.Module,
              f=model_save_path)
 
 
+class ContrastiveLoss(nn.Module):
+    """
+    Contrastive Loss:
+      y = 1 for positive (same class), y = 0 for negative (different)
+    Based on Hadsell et al. 2006
+    """
+    def __init__(self, margin=2.0):
+        super(ContrastiveLoss, self).__init__()
+        self.margin = margin
+
+    def forward(self, output1, output2, label):
+        euclidean_distance = F.pairwise_distance(output1, output2) + 1e-8  # numerical stability
+
+        pos_loss = label * torch.pow(euclidean_distance, 2)
+        neg_loss = (1 - label) * torch.pow(torch.clamp(self.margin - euclidean_distance, min=0.0), 2)
+
+        loss = 0.5 * torch.mean(pos_loss + neg_loss)
+        return loss
+
+def compute_pair_accuracy(output1, output2, labels, threshold=1.0):
+    """
+    Compute accuracy for a batch of pairs.
+
+    Labels:
+      1 = same
+      0 = different
+    """
+    with torch.no_grad():
+        distances = F.pairwise_distance(output1, output2)  # Euclidean distance
+        # Predict 1 (same) if distance < threshold, else 0 (different)
+        preds = (distances < threshold).float()
+        correct = (preds == labels).sum().item()
+        accuracy = correct / labels.size(0)
+    return accuracy
