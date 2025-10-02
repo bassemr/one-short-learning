@@ -451,7 +451,12 @@ def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch
     # 6. Prepare few-shot test dataset
     # -------------------------------
     test_data = FewShotTestDataset(test_dataset)
-    print(f"[INFO] Few-shot test dataset tasks: {len(test_data)}")
+    
+    task = test_data[0]  # get the first task
+    print(f"[INFO] Support Images shape: {task['support_images'].shape}")
+    print(f"[INFO] Support Labels shape: {task['support_labels'].shape}")
+    print(f"[INFO] Query Images shape: {task['query_images'].shape}")
+    print(f"[INFO] Query Labels shape: {task['query_labels'].shape}")
 
     return train_loader, valid_loader, test_data
 
