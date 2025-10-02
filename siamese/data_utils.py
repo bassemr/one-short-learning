@@ -317,49 +317,36 @@ class CIFAR100BPairsFast(Dataset):
         img1, _ = self.dataset[idx1]
         img2, _ = self.dataset[idx2]
         return img1, img2, torch.tensor(label, dtype=torch.float32)
+from torch.utils.data import Dataset
+import torch
+
 class FewShotTestDataset(Dataset):
     """
     Dataset for Few-Shot evaluation on a fixed test set.
 
-    This class prepares **support** and **query** sets for each class.
-    It is intended for N-way K-shot evaluation where:
-        - N = number of classes in the dataset
-        - K = number of support examples per class (here fixed at 1)
-        - Queries are the remaining examples in the class (subset chosen randomly)
-
-    Args:
-        dataset (Dataset): Test dataset containing (image, label) tuples.
+    Generates:
+        - One support image per class (1-shot)
+        - All remaining images per class as queries
     """
     def __init__(self, dataset):
         self.dataset = dataset
 
-        # Build a mapping from class label -> list of indices in dataset
+        # Build mapping: class -> list of indices
         self.class_to_indices = {}
         for idx, (_, label) in enumerate(dataset):
             if label not in self.class_to_indices:
                 self.class_to_indices[label] = []
             self.class_to_indices[label].append(idx)
 
-        # List of all classes in the test set
+        # List of classes
         self.classes = sorted(self.class_to_indices.keys())
-        self.num_classes = len(self.classes)  # N-way classification
-        self.num_tasks = 1  # Only one fixed split: 1 support + rest queries
+        self.num_classes = len(self.classes)
+        self.num_tasks = 1  # fixed split: 1 support + rest queries
 
     def __len__(self):
-        """Return number of tasks (splits) in the dataset."""
         return self.num_tasks
 
     def __getitem__(self, idx):
-        """
-        Generate a few-shot task with support and query sets.
-
-        Returns:
-            dict with:
-                support_images: [N, C, H, W] Tensor
-                support_labels: [N] Tensor
-                query_images: [total_queries, C, H, W] Tensor
-                query_labels: [total_queries] Tensor
-        """
         support_images, support_labels = [], []
         query_images, query_labels = [], []
 
@@ -367,29 +354,29 @@ class FewShotTestDataset(Dataset):
             indices = self.class_to_indices[cls]
             assert len(indices) >= 2, f"Class {cls} must have at least 2 images"
 
-            # Randomly permute indices for this class
+            # Randomly select one support image
             chosen = torch.randperm(len(indices))
-            support_idx = chosen[0]     # Pick one for support (1-shot)
-            query_idx = chosen[1:5]     # Pick next few for queries
+            support_idx = chosen[0]
+            query_indices = chosen[1:]  # all remaining images as queries
 
-            # Add support image and label
+            # Add support image
             img, _ = self.dataset[indices[support_idx]]
             support_images.append(img)
             support_labels.append(class_idx)
 
-            # Add query images and labels
-            for i in query_idx:
+            # Add all remaining images as queries
+            for i in query_indices:
                 img, _ = self.dataset[indices[i]]
                 query_images.append(img)
                 query_labels.append(class_idx)
 
-        # Stack images into tensors
         return {
-            "support_images": torch.stack(support_images),     # [N, C, H, W]
-            "support_labels": torch.tensor(support_labels),    # [N]
-            "query_images": torch.stack(query_images),         # [total_queries, C, H, W]
-            "query_labels": torch.tensor(query_labels)         # [total_queries]
+            "support_images": torch.stack(support_images),   # [N, C, H, W]
+            "support_labels": torch.tensor(support_labels),  # [N]
+            "query_images": torch.stack(query_images),       # [total_queries, C, H, W]
+            "query_labels": torch.tensor(query_labels)       # [total_queries]
         }
+
 def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch_size, img_size=224):
     """
     Prepare data loaders and few-shot test dataset for CIFAR-100.

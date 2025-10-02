@@ -148,7 +148,7 @@ train(model, train_loader, val_loader, optimizer, loss_fn, device, epochs=50, pa
 This file contains **helper functions** for visualization and debugging, such as plotting images, pairs, and predictions.
 
 
-## Experiment
+## 🔬 Experiment
 
 ### First Experiment
 
