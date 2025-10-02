@@ -354,18 +354,17 @@ class FewShotTestDataset(Dataset):
             indices = self.class_to_indices[cls]
             assert len(indices) >= 2, f"Class {cls} must have at least 2 images"
 
-            # Randomly select one support image
             chosen = torch.randperm(len(indices))
-            support_idx = chosen[0]
-            query_indices = chosen[1:]  # all remaining images as queries
+            support_idx = chosen[0]      # 1 support image
+            query_idx = chosen[1:]       # all remaining images as query
 
             # Add support image
             img, _ = self.dataset[indices[support_idx]]
             support_images.append(img)
             support_labels.append(class_idx)
 
-            # Add all remaining images as queries
-            for i in query_indices:
+            # Add query images
+            for i in query_idx:
                 img, _ = self.dataset[indices[i]]
                 query_images.append(img)
                 query_labels.append(class_idx)
