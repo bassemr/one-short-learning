@@ -321,7 +321,7 @@ class CIFAR100BPairsFast(Dataset):
 
 import torch
 from torch.utils.data import Dataset, DataLoader, TensorDataset
-def create_support_query_split(dataset, classes=None):
+def create_support_query_split(dataset ):
     """
     Create one fixed support/query split:
       - 1 support per class
@@ -446,7 +446,7 @@ def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch
     # -------------------------------
 
     # 1. Create split dict
-    split = create_support_query_split(test_dataset, classes=10)
+    split = create_support_query_split(test_dataset)
     # 2. Make DataLoaders
     support_loader, query_loader = create_fewshot_loaders(split, query_batch_size=128)
     print("Support:", split["support_images"].shape, split["support_labels"].shape)
