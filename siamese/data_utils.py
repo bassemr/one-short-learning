@@ -317,64 +317,81 @@ class CIFAR100BPairsFast(Dataset):
         img1, _ = self.dataset[idx1]
         img2, _ = self.dataset[idx2]
         return img1, img2, torch.tensor(label, dtype=torch.float32)
-from torch.utils.data import Dataset
+
+
 import torch
+from torch.utils.data import Dataset, DataLoader, TensorDataset
 
-class FewShotTestDataset(Dataset):
+def create_support_query_split(dataset, num_classes=10):
     """
-    Dataset for Few-Shot evaluation on a fixed test set.
+    Create a support set (1 image per class) and query set (rest) 
+    from a labeled dataset.
 
-    Generates:
-        - One support image per class (1-shot)
-        - All remaining images per class as queries
+    Args:
+        dataset: list or Dataset of (image, label) pairs
+        num_classes: number of classes (default 10)
+
+    Returns:
+        dict with:
+            support_images: [num_classes, C, H, W]
+            support_labels: [num_classes]
+            query_images: [total_queries, C, H, W]
+            query_labels: [total_queries]
     """
-    def __init__(self, dataset):
-        self.dataset = dataset
+    # Organize indices per class
+    class_to_indices = {c: [] for c in range(num_classes)}
+    for idx, (_, label) in enumerate(dataset):
+        class_to_indices[label].append(idx)
 
-        # Build mapping: class -> list of indices
-        self.class_to_indices = {}
-        for idx, (_, label) in enumerate(dataset):
-            if label not in self.class_to_indices:
-                self.class_to_indices[label] = []
-            self.class_to_indices[label].append(idx)
+    support_images, support_labels = [], []
+    query_images, query_labels = [], []
 
-        # List of classes
-        self.classes = sorted(self.class_to_indices.keys())
-        self.num_classes = len(self.classes)
-        self.num_tasks = 1  # fixed split: 1 support + rest queries
+    for cls in range(num_classes):
+        indices = class_to_indices[cls]
+        assert len(indices) > 1, f"Class {cls} must have >=2 images"
 
-    def __len__(self):
-        return self.num_tasks
+        # pick first one as support, rest as query
+        support_idx = indices[0]
+        query_idx = indices[1:]
 
-    def __getitem__(self, idx):
-        support_images, support_labels = [], []
-        query_images, query_labels = [], []
+        img, _ = dataset[support_idx]
+        support_images.append(img)
+        support_labels.append(cls)
 
-        for class_idx, cls in enumerate(self.classes):
-            indices = self.class_to_indices[cls]
-            assert len(indices) >= 2, f"Class {cls} must have at least 2 images"
+        for qi in query_idx:
+            img, _ = dataset[qi]
+            query_images.append(img)
+            query_labels.append(cls)
 
-            chosen = torch.randperm(len(indices))
-            support_idx = chosen[0]      # 1 support image
-            query_idx = chosen[1:]       # all remaining images as query
+    # Convert to tensors
+    return {
+        "support_images": torch.stack(support_images),   # [N, C, H, W]
+        "support_labels": torch.tensor(support_labels),  # [N]
+        "query_images": torch.stack(query_images),       # [total_queries, C, H, W]
+        "query_labels": torch.tensor(query_labels)       # [total_queries]
+    }
 
-            # Add support image
-            img, _ = self.dataset[indices[support_idx]]
-            support_images.append(img)
-            support_labels.append(class_idx)
 
-            # Add query images
-            for i in query_idx:
-                img, _ = self.dataset[indices[i]]
-                query_images.append(img)
-                query_labels.append(class_idx)
+def create_fewshot_loaders(split_dict, query_batch_size=64):
+    """
+    Wrap support and query sets into DataLoaders.
 
-        return {
-            "support_images": torch.stack(support_images),   # [N, C, H, W]
-            "support_labels": torch.tensor(support_labels),  # [N]
-            "query_images": torch.stack(query_images),       # [total_queries, C, H, W]
-            "query_labels": torch.tensor(query_labels)       # [total_queries]
-        }
+    Args:
+        split_dict: dictionary from create_support_query_split
+        query_batch_size: batch size for query loader
+
+    Returns:
+        support_loader, query_loader
+    """
+    support_ds = TensorDataset(split_dict["support_images"], split_dict["support_labels"])
+    query_ds = TensorDataset(split_dict["query_images"], split_dict["query_labels"])
+
+    support_loader = DataLoader(support_ds, batch_size=len(support_ds), shuffle=False)
+    query_loader = DataLoader(query_ds, batch_size=query_batch_size, shuffle=False)
+
+    return support_loader, query_loader
+
+
 
 def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch_size, img_size=224):
     """
@@ -436,15 +453,17 @@ def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch
     # -------------------------------
     # 6. Prepare few-shot test dataset
     # -------------------------------
-    test_data = FewShotTestDataset(test_dataset)
-    
-    task = test_data[0]  # get the first task
-    print(f"[INFO] Support Images shape: {task['support_images'].shape}")
-    print(f"[INFO] Support Labels shape: {task['support_labels'].shape}")
-    print(f"[INFO] Query Images shape: {task['query_images'].shape}")
-    print(f"[INFO] Query Labels shape: {task['query_labels'].shape}")
 
-    return train_loader, valid_loader, test_data
+    # 1. Create split dict
+    split = create_support_query_split(test_dataset, num_classes=10)
+    # 2. Make DataLoaders
+    support_loader, query_loader = create_fewshot_loaders(split, query_batch_size=128)
+    print("Support:", split["support_images"].shape, split["support_labels"].shape)
+    print("Query:", split["query_images"].shape, split["query_labels"].shape)
+
+
+
+    return train_loader, valid_loader, support_loader, query_loader
 
 
 
