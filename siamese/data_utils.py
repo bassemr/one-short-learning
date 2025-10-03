@@ -321,19 +321,15 @@ class CIFAR100BPairsFast(Dataset):
 
 import torch
 from torch.utils.data import Dataset, DataLoader, TensorDataset
-
 def create_support_query_split(dataset, classes=None):
     """
-    Create one fixed support/query split.
-
-    Args:
-        dataset: full CIFAR-100 dataset
-        classes: list of class ids to keep (default: first 10)
+    Create one fixed support/query split:
+      - 1 support per class
+      - rest as queries
     """
-    if classes is None:
-        classes = list(range(10))  # pick first 10 classes
 
-    # Build mapping
+    classes = sorted({label for _, label in dataset})
+   
     class_to_indices = {c: [] for c in classes}
     for idx, (_, label) in enumerate(dataset):
         if label in class_to_indices:
@@ -347,10 +343,12 @@ def create_support_query_split(dataset, classes=None):
         chosen = torch.randperm(len(indices))
         support_idx, query_idx = chosen[0], chosen[1:]
 
+        # Support
         img, _ = dataset[indices[support_idx]]
         support_images.append(img)
         support_labels.append(class_idx)
 
+        # Queries
         for i in query_idx:
             img, _ = dataset[indices[i]]
             query_images.append(img)
@@ -362,6 +360,7 @@ def create_support_query_split(dataset, classes=None):
         "query_images": torch.stack(query_images),
         "query_labels": torch.tensor(query_labels),
     }
+
 
 
 def create_fewshot_loaders(split_dict, query_batch_size=64):
@@ -447,7 +446,7 @@ def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch
     # -------------------------------
 
     # 1. Create split dict
-    split = create_support_query_split(test_dataset, num_classes=10)
+    split = create_support_query_split(test_dataset, classes=10)
     # 2. Make DataLoaders
     support_loader, query_loader = create_fewshot_loaders(split, query_batch_size=128)
     print("Support:", split["support_images"].shape, split["support_labels"].shape)
