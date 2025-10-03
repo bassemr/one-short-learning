@@ -322,53 +322,45 @@ class CIFAR100BPairsFast(Dataset):
 import torch
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
-def create_support_query_split(dataset, num_classes=10):
+def create_support_query_split(dataset, classes=None):
     """
-    Create a support set (1 image per class) and query set (rest) 
-    from a labeled dataset.
+    Create one fixed support/query split.
 
     Args:
-        dataset: list or Dataset of (image, label) pairs
-        num_classes: number of classes (default 10)
-
-    Returns:
-        dict with:
-            support_images: [num_classes, C, H, W]
-            support_labels: [num_classes]
-            query_images: [total_queries, C, H, W]
-            query_labels: [total_queries]
+        dataset: full CIFAR-100 dataset
+        classes: list of class ids to keep (default: first 10)
     """
-    # Organize indices per class
-    class_to_indices = {c: [] for c in range(num_classes)}
+    if classes is None:
+        classes = list(range(10))  # pick first 10 classes
+
+    # Build mapping
+    class_to_indices = {c: [] for c in classes}
     for idx, (_, label) in enumerate(dataset):
-        class_to_indices[label].append(idx)
+        if label in class_to_indices:
+            class_to_indices[label].append(idx)
 
     support_images, support_labels = [], []
     query_images, query_labels = [], []
 
-    for cls in range(num_classes):
+    for class_idx, cls in enumerate(classes):
         indices = class_to_indices[cls]
-        assert len(indices) > 1, f"Class {cls} must have >=2 images"
+        chosen = torch.randperm(len(indices))
+        support_idx, query_idx = chosen[0], chosen[1:]
 
-        # pick first one as support, rest as query
-        support_idx = indices[0]
-        query_idx = indices[1:]
-
-        img, _ = dataset[support_idx]
+        img, _ = dataset[indices[support_idx]]
         support_images.append(img)
-        support_labels.append(cls)
+        support_labels.append(class_idx)
 
-        for qi in query_idx:
-            img, _ = dataset[qi]
+        for i in query_idx:
+            img, _ = dataset[indices[i]]
             query_images.append(img)
-            query_labels.append(cls)
+            query_labels.append(class_idx)
 
-    # Convert to tensors
     return {
-        "support_images": torch.stack(support_images),   # [N, C, H, W]
-        "support_labels": torch.tensor(support_labels),  # [N]
-        "query_images": torch.stack(query_images),       # [total_queries, C, H, W]
-        "query_labels": torch.tensor(query_labels)       # [total_queries]
+        "support_images": torch.stack(support_images),
+        "support_labels": torch.tensor(support_labels),
+        "query_images": torch.stack(query_images),
+        "query_labels": torch.tensor(query_labels),
     }
 
 
