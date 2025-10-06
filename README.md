@@ -64,13 +64,20 @@ The objective is to train a model that can generalize to unseen classes with onl
      - Classify queries by comparing them against the support set.  
 
 ---
+## 🔗 Siamese Network Concept
 
-## 🔗 Siamese Network Connection
-Although not explicitly implemented as a Siamese network, the **pair-based binary classification** setup is equivalent in spirit:
-- Model compares **two embeddings** and predicts similarity.  
-- In Siamese form, this would be:
-  - Shared ResNet18 encoder → Embeddings → Similarity score.  
-- Loss function here: **Binary Cross-Entropy**, instead of contrastive loss.  
+A **Siamese network** is a special type of model that learns to **compare two inputs** instead of classifying just one.
+
+- It has **two identical branches** (sharing the same weights) — usually the same CNN such as **ResNet18**.  
+- Each branch extracts **features (embeddings)** from its input image.  
+- The model then **measures how similar** the two embeddings are (for example, by computing their distance).  
+- If the distance is small → the images are from the **same class**,  
+  if large → they are from **different classes**.  
+
+### In This Project
+- We use **paired images** (two inputs at a time).  
+- The model learns to predict whether the pair is **same or different**.  
+- This is effectively **Siamese learning**, even though it’s implemented as a **binary classifier**.   
 \![Model Architecture](./images/modelArch.png)
 \![k-way n-shot](./images/k-way-n-shot.png)
 \![One Shot Prediction](./images/one_shot_pred.png)
@@ -118,7 +125,6 @@ This file defines the **Siamese Network** for one-shot learning using ResNet-18 
 
 ```python
 from models import SiameseResNet
-import torch
 
 model = SiameseResNet()
 model.freeze_until(layer_num=4) # default will freeze all layers 
@@ -173,14 +179,18 @@ This file contains **helper functions** for visualization and debugging, such as
 
 ![Epoch-wise Training Log](./images/training_25e_5p_250p.png)  
 *Figure 2: Epoch-wise log showing train and validation loss and accuracy.*
-
-
 ---
 
+### Best Model Summary
+
+| Metric | Best Epoch | Train | Validation |
+|:-------|:------------:|:-------:|:------------:|
+| **Loss** | 19 | **0.3768** | **0.3831** |
+| **Accuracy** | 19 | **0.8408** | **0.8401** |
 
 ---
 [RESULT] Few-shot accuracy: 0.3329
-
+---
 
 ### Second Experiment
 
@@ -193,7 +203,7 @@ This file contains **helper functions** for visualization and debugging, such as
 - Total pairs generated for training: **17,998**  
 - Number of epochs: **50**  
 - Early stopping patience: **10**  
-- Wall time: **1h 29min 25s** (CPU ~5h 13min)  
+- Wall time: **1h 29min 25s** 
 
 ---
 
@@ -209,8 +219,16 @@ This file contains **helper functions** for visualization and debugging, such as
 ![Epoch-wise Training Log](./images/training_50e_10p_100p.png)  
 *Figure 2: Epoch-wise log showing train and validation loss and accuracy.*
 
-**[RESULT] Few-shot accuracy: 0.3888**
+---
+### Best Model Summary
 
+| Metric | Best Epoch | Train | Validation |
+|:-------|:------------:|:-------:|:------------:|
+| **Loss** | 12 | **0.5362** | **0.5425** |
+| **Accuracy** | 12 | **0.7338** | **0.7248** |
+
+---
+**[RESULT] Few-shot accuracy: 0.3888**
 ---
 
 
@@ -249,11 +267,11 @@ This file contains **helper functions** for visualization and debugging, such as
 |:-------|:------------:|:-------:|:------------:|
 | **Loss** | 25 | 0.3017 | **0.3450** |
 | **Accuracy** | 25 | 0.8791 | **0.8625** |
-
+---
 **[RESULT] Few-shot accuracy: 0.3693**
+---
 
-
-### Fifth Experiment 
+### fourth Experiment 
 
 **Model & Setup:**
 - Model: ResNet18 + BCEWithLogits  
@@ -262,7 +280,8 @@ This file contains **helper functions** for visualization and debugging, such as
 - Number of pairs per class: 350 positive + 350 negative  
 - Total pairs generated for training: 55,970  
 - Number of epochs: 30  
-- Early stopping patience: 10  
+- Early stopping patience: 10 
+- Wall time: 6h 30min 25s   
 
 ---
 
