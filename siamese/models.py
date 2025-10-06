@@ -171,48 +171,74 @@ class SiameseResNetContrastive(nn.Module):
                 col_width=20,
                 row_settings=["var_names"])
 
+import torch
+import torch.nn as nn
 
-class SiameseResNetCIFAR(nn.Module):
-    """
-    Siamese network with ResNet18 backbone adapted for CIFAR-100 (32x32 images).
-    """
-    def __init__(self, embedding_size=128, dropout_p=0.3):
+# -------------------------------
+# CNN Encoder for 32x32 images
+# -------------------------------
+class CNNEncoder(nn.Module):
+    def __init__(self, embedding_dim=128):
         super().__init__()
+        self.conv = nn.Sequential(
+            # Input: 3x32x32
+            nn.Conv2d(3, 64, kernel_size=5, stride=1, padding=2),  # -> 64x32x32
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(2),  # -> 64x16x16
 
-        # Load ResNet18 (no pretrained weights, since CIFAR != ImageNet)
-        resnet = models.resnet18(weights=None)
+            nn.Conv2d(64, 128, kernel_size=5, stride=1, padding=2), # -> 128x16x16
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.MaxPool2d(2),  # -> 128x8x8
 
-        # Modify first conv and remove maxpool for CIFAR-100
-        resnet.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
-        resnet.maxpool = nn.Identity()
-
-        # Encoder backbone: remove fc layer
-        self.encoder = nn.Sequential(*list(resnet.children())[:-1])
-
-        # Embedding head
-        self.fc = nn.Sequential(
-            nn.Linear(512, 256),
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=dropout_p),
-            nn.Linear(256, embedding_size)
+            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1), # -> 256x8x8
+            nn.BatchNorm2d(256),
+            nn.ReLU(),
+            nn.MaxPool2d(2)  # -> 256x4x4
         )
 
-        # Classifier head (for pair similarity)
-        self.classifier = nn.Linear(embedding_size, 1)
+        self.fc = nn.Sequential(
+            nn.Linear(256*4*4, 512),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(512, embedding_dim)  # -> final embedding
+        )
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = x.view(x.size(0), -1)  # flatten
+        x = self.fc(x)
+        return x
+
+
+# -------------------------------
+# Siamese Network 
+# -------------------------------
+class SiameseCNN(nn.Module):
+    def __init__(self, embedding_dim=128):
+        super().__init__()
+        self.encoder = CNNEncoder(embedding_dim)
+        self.classifier = nn.Linear(embedding_dim, 1)  # single logit for BCE
 
     def forward_once(self, x):
-        x = self.encoder(x)              # (B, 512, 1, 1)
-        x = torch.flatten(x, 1)          # (B, 512)
-        x = self.fc(x)                   # (B, embedding_size)
-        return x
+        return self.encoder(x)
 
     def forward(self, x1, x2):
         e1 = self.forward_once(x1)
         e2 = self.forward_once(x2)
 
-        # Difference representation
-        z = torch.abs(e1 - e2)
-
-        # Logits for BCE loss
-        out = self.classifier(z)
+        diff = torch.abs(e1 - e2)
+        out = self.classifier(diff)  # logits for BCEWithLogitsLoss
         return out
+    
+    def summary(self, input_size=(32, 3, 32, 32), verbose=0):
+        """
+        Wrapper around torchinfo.summary for convenience.
+        """
+        return summary(self, 
+                input_size=[(input_size), (input_size)],  # two inputs
+                verbose=verbose,
+                col_names=["input_size", "output_size", "num_params", "trainable"],
+                col_width=20,
+                row_settings=["var_names"])

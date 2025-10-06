@@ -174,25 +174,119 @@ This file contains **helper functions** for visualization and debugging, such as
 ![Epoch-wise Training Log](./images/training_25e_5p_250p.png)  
 *Figure 2: Epoch-wise log showing train and validation loss and accuracy.*
 
-| Epoch | Train Loss | Train Acc | Val Loss | Val Acc | Notes |
-|-------|-----------|-----------|----------|---------|-------|
-| 1     | 0.6391    | 0.6240    | 0.6363   | 0.5977  | ✅ New best model |
-| 2     | 0.5944    | 0.6776    | 0.6116   | 0.6384  | ✅ New best model |
-| 3     | 0.5759    | 0.6980    | 0.5599   | 0.7058  | ✅ New best model |
-| 4     | 0.5593    | 0.7128    | 0.5405   | 0.7269  | ✅ New best model |
-| 5     | 0.5414    | 0.7278    | 0.5062   | 0.7554  | ✅ New best model |
-| ...   | ...       | ...       | ...      | ...     | ... |
-| 24    | 0.3309    | 0.8636    | 0.4070   | 0.8383  | ⚠️ Early stop counter 5/5 |
-| 25    | -         | -         | -        | -       | ⏹️ Early stopping triggered |
-
----
-
-### Observations
-- Training accuracy steadily increased, while validation accuracy closely followed, indicating good generalization.  
-- Validation loss occasionally lower than training loss, likely due to dropout and data augmentation during training.  
-- Early stopping was triggered at epoch 24, saving the best model at epoch 19.  
-- Loss curves indicate convergence before the maximum number of epochs.
 
 ---
 
 
+---
+[RESULT] Few-shot accuracy: 0.3329
+
+
+### Second Experiment
+
+**Model & Setup:**
+- Backbone: **ResNet18 (last block unfrozen)**  
+- Loss: **BCEWithLogits**  
+- Image size: **224** (resized)  
+- Seen classes: **90**  
+- Number of pairs per class: **100 positive + 100 negative**  
+- Total pairs generated for training: **17,998**  
+- Number of epochs: **50**  
+- Early stopping patience: **10**  
+- Wall time: **1h 29min 25s** (CPU ~5h 13min)  
+
+---
+
+#### Training Results
+
+**1. Accuracy and Loss Curves**
+
+![Training and Validation Accuracy & Loss](./images/50e_10p_100p.png)  
+*Figure 1: Training and validation accuracy/loss over epochs.*
+
+**2. Epoch-wise Training Details**
+
+![Epoch-wise Training Log](./images/training_50e_10p_100p.png)  
+*Figure 2: Epoch-wise log showing train and validation loss and accuracy.*
+
+**[RESULT] Few-shot accuracy: 0.3888**
+
+---
+
+
+
+### Third Experiment
+
+**Model & Setup:**
+- Model: ResNet18 (Layer 4 Unfrozen) + BCEWithLogits  
+- Image Size: 224  
+- Seen Classes: 90  
+- Number of pairs per class: 300 positive + 300 negative  
+- Total pairs generated for training: 53,979  
+- Number of epochs: 30  
+- Early stopping patience: 10  
+- Wall time: 5h 57min 42s  
+
+---
+
+### Training Results
+
+**1. Accuracy and Loss Curves**
+
+![Training and Validation Accuracy & Loss](./images/third_expr_result.png)  
+*Figure 3: Training and validation accuracy/loss over epochs with the best epoch marked.*
+
+**2. Epoch-wise Training Details**
+
+![Epoch-wise Training Log](./images/third_expr.png)  
+*Figure 4: Epoch-wise log showing train and validation loss and accuracy progression.*
+
+---
+
+### Best Model Summary
+
+| Metric | Best Epoch | Train | Validation |
+|:-------|:------------:|:-------:|:------------:|
+| **Loss** | 25 | 0.3017 | **0.3450** |
+| **Accuracy** | 25 | 0.8791 | **0.8625** |
+
+**[RESULT] Few-shot accuracy: 0.3693**
+
+
+### Fifth Experiment 
+
+**Model & Setup:**
+- Model: ResNet18 + BCEWithLogits  
+- Image Size: 224  
+- Seen Classes: 80  
+- Number of pairs per class: 350 positive + 350 negative  
+- Total pairs generated for training: 55,970  
+- Number of epochs: 30  
+- Early stopping patience: 10  
+
+---
+
+### Training Results
+
+**1. Accuracy and Loss Curves**
+
+![Training and Validation Accuracy & Loss](./images/30e_80s.png)  
+*Figure 5: Training and validation accuracy/loss curves with the best epoch marked.*
+
+**2. Epoch-wise Training Details**
+
+![Epoch-wise Training Log](./images/30e_80s_logs.png)  
+*Figure 6: Epoch-wise log showing train and validation loss and accuracy progression.*
+
+---
+
+### Best Model Summary
+
+| Metric | Best Epoch | Train | Validation |
+|:-------|:------------:|:-------:|:------------:|
+| **Loss** | 29 | 0.2800 | **0.3525** |
+| **Accuracy** | 29 | 0.8902 | **0.8698** |
+
+---
+
+**[RESULT] Few-shot accuracy: 0.2902**
