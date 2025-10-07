@@ -394,7 +394,7 @@ def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch
     3. Apply transformations to unseen/test dataset.
     4. Generate positive and negative pairs from seen classes for Siamese training.
     5. Split pairs into training and validation loaders.
-    6. Prepare few-shot test dataset from unseen classes.
+    6. Prepare few-shot support and query sets from unseen classes for evaluation.
 
     Args:
         root (str): Path to CIFAR-100 data folder.
@@ -407,7 +407,8 @@ def prepare_data(root, num_training_classes, pos_num_pairs, neg_num_pairs, batch
     Returns:
         train_loader (DataLoader): Training loader with positive/negative pairs.
         valid_loader (DataLoader): Validation loader.
-        test_data (Dataset): Few-shot test dataset from unseen classes.
+        support_loader (DataLoader): Support set loader (few labeled examples per unseen class).
+        query_loader (DataLoader): Query set loader (samples to classify using the support set).
     """
 
     # -------------------------------

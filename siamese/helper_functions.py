@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import copy
 import torch.nn.functional as F
 import torchvision
+import numpy as np
 
 MEAN = torch.tensor([0.4914, 0.4822, 0.4465])
 STD = torch.tensor([0.2023, 0.1994, 0.2010])
@@ -135,6 +136,50 @@ def plot_history(history):
     plt.subplot(1, 2, 2)
     plt.plot(epochs, history["train_acc"], label="Train Accuracy")
     plt.plot(epochs, history["val_acc"], label="Val Accuracy")
+    plt.xlabel("Epochs")
+    plt.ylabel("Accuracy")
+    plt.title("Training vs Validation Accuracy")
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_history_best_model(history):
+    epochs = np.arange(1, len(history["train_loss"]) + 1)
+
+    # Find the best epoch (lowest val loss)
+    best_epoch = np.argmin(history["val_loss"]) + 1
+    best_val_loss = history["val_loss"][best_epoch - 1]
+    best_val_acc = history["val_acc"][best_epoch - 1]
+
+    plt.figure(figsize=(12, 5))
+
+    # -----------------------------
+    # Plot Loss
+    # -----------------------------
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs, history["train_loss"], label="Train Loss", marker='o', alpha=0.6)
+    plt.plot(epochs, history["val_loss"], label="Val Loss", marker='o', alpha=0.6)
+    plt.axvline(best_epoch, color="red", linestyle="--", alpha=0.8, label=f"Best Epoch ({best_epoch})")
+    plt.scatter(best_epoch, best_val_loss, color="red", s=80, zorder=5)
+    plt.text(best_epoch + 0.3, best_val_loss, f"Epoch {best_epoch}\nVal Loss: {best_val_loss:.3f}", 
+             color="red", fontsize=9, verticalalignment="bottom")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title("Training vs Validation Loss")
+    plt.legend()
+
+    # -----------------------------
+    # Plot Accuracy
+    # -----------------------------
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs, history["train_acc"], label="Train Accuracy", marker='o', alpha=0.6)
+    plt.plot(epochs, history["val_acc"], label="Val Accuracy", marker='o', alpha=0.6)
+    plt.axvline(best_epoch, color="red", linestyle="--", alpha=0.8)
+    plt.scatter(best_epoch, best_val_acc, color="red", s=80, zorder=5)
+    plt.text(best_epoch + 0.3, best_val_acc, f"Epoch {best_epoch}\nVal Acc: {best_val_acc:.3f}", 
+             color="red", fontsize=9, verticalalignment="bottom")
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
     plt.title("Training vs Validation Accuracy")

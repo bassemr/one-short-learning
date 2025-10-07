@@ -309,3 +309,51 @@ This file contains **helper functions** for visualization and debugging, such as
 ---
 
 **[RESULT] Few-shot accuracy: 0.2902**
+
+---
+
+### Fifth Experiment
+
+**Model & Setup:**
+- Model: Siamese CNN + Contrastive Loss  
+- Image Size: 32 (original)  
+- Seen Classes: 50  
+- Number of pairs per class: 300 positive + 300 negative  
+- Total pairs generated for training: 29,994  
+- Number of epochs: 50  
+- Early stopping patience: 10  
+- Wall time: 3h 4min 23s  
+
+---
+
+### Training Results
+
+**1. Accuracy and Loss Curves**
+
+*(Replace with actual plot if available)*  
+
+![Training and Validation Accuracy & Loss](./images/cnn.png)  
+*Figure 7: Training and validation accuracy/loss curves with the best epoch marked.*
+
+**2. Epoch-wise Training Details**
+
+*(Optional: you can include a table or image from your logs)*  
+
+![Epoch-wise Training Log](./images/cnn_logs.png)  
+*Figure 8: Epoch-wise log showing train and validation loss and accuracy progression.*
+
+---
+
+### Best Model Summary
+
+| Metric | Best Epoch | Train | Validation |
+|:-------|:-----------:|:------:|:----------:|
+| **Loss** | 18 | 0.4482 | **0.5518** |
+| **Accuracy** | 18 | 0.7974 | **0.6946** |
+
+---
+
+**[RESULT] Few-shot accuracy: —**  
+
+
+
