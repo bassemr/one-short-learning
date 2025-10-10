@@ -131,3 +131,56 @@ def evaluate_fewshot_distance(model, support_loader, query_loader, device="cuda"
     acc = total_correct / total_samples
     print(f"[RESULT] Distance-based Few-shot Accuracy: {acc:.4f}")
     return acc
+
+def evaluate_fewshot_cosine(model, support_loader, query_loader, device="cuda"):
+    """
+    Evaluate SiameseResNet on a few-shot task using cosine similarity
+    between embeddings instead of Euclidean distance.
+
+    Args:
+        model: SiameseResNet (outputs z, dist)
+        support_loader: DataLoader for support set (1 example per class)
+        query_loader: DataLoader for query set
+        device: "cuda" or "cpu"
+
+    Returns:
+        accuracy (float)
+    """
+    model.eval()
+    total_correct, total_samples = 0, 0
+
+    # ---- Step 1: get all support embeddings ----
+    support_images, support_labels = next(iter(support_loader))
+    support_images = support_images.to(device)
+    support_labels = support_labels.to(device)
+
+    with torch.no_grad():
+        # Compute support embeddings and normalize
+        support_embs = model.forward_once(support_images)   # [K, D]
+        support_embs = F.normalize(support_embs, p=2, dim=1)  # normalize for cosine similarity
+
+    # ---- Step 2: loop over query batches ----
+    with torch.no_grad():
+        for query_images, query_labels in query_loader:
+            query_images = query_images.to(device)
+            query_labels = query_labels.to(device)
+
+            # Compute query embeddings and normalize
+            query_embs = model.forward_once(query_images)       # [Q, D]
+            query_embs = F.normalize(query_embs, p=2, dim=1)
+
+            # ---- Step 3: compute cosine similarity matrix ----
+            # similarity = cosine(q, s) = dot(q, s) since vectors are normalized
+            sims = torch.matmul(query_embs, support_embs.T)  # [Q, K]
+
+            # ---- Step 4: pick the most similar support ----
+            best_idx = torch.argmax(sims, dim=1)            # [Q]
+            pred_labels = support_labels[best_idx]
+
+            # ---- Step 5: compute batch accuracy ----
+            total_correct += (pred_labels == query_labels).sum().item()
+            total_samples += query_labels.size(0)
+
+    acc = total_correct / total_samples
+    print(f"[RESULT] Cosine similarity Few-shot Accuracy: {acc:.4f}")
+    return acc
