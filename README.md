@@ -63,6 +63,7 @@ The objective is to train a model that can generalize to unseen classes with onl
      - Use the remaining images as **queries**.  
      - Classify queries by comparing them against the support set.  
 
+![Data Diagram](./images/Data%20Diagram.png)  
 ---
 ## 🔗 Siamese Network Concept
 
@@ -158,202 +159,202 @@ This file contains **helper functions** for visualization and debugging, such as
 
 ### First Experiment
 
-**Dataset & Setup:**
-- Seen classes: 90  
-- Number of pairs per class: 250 positive + 250 negative  
-- Total pairs generated for training: 44,977  
-- Number of epochs: 25  
-- Early stopping patience: 5  
-- Wall time: 4h 29min 51s  
+**Description**:
+- Model: Resnet18 + BCEWithLogits
+- Image Size: 224
+- Seen classes: 90
+- Number of pairs per class: 300 positive + 300 negative
+- Total pairs generated for training: 53979
+- Number of epochs: 30
+- Early stopping patience: 10
+- Best epoch: Epoch [25/30] --> Train Loss: 0.3017, Train Acc: 0.8791 | Val Loss: 0.3450, Val Acc: 0.8625
+- time: 5h 57min 42s
+
+**Results**:
+- Few-shot accuracy: 0.3693
+- Distance-based Few-shot Accuracy: 0.3907
+- Cosine similarity Few-shot Accuracy: 0.3830
 
 ---
 
-### Training Results
+![Training and Validation Accuracy & Loss](./images/first_exp.png)  
 
-**1. Accuracy and Loss Curves**
-
-![Training and Validation Accuracy & Loss](./images/25e_5p_250p.png)  
-*Figure 1: Training and validation accuracy/loss over epochs.*
-
-**2. Epoch-wise Training Details**
-
-![Epoch-wise Training Log](./images/training_25e_5p_250p.png)  
-*Figure 2: Epoch-wise log showing train and validation loss and accuracy.*
----
-
-### Best Model Summary
-
-| Metric | Best Epoch | Train | Validation |
-|:-------|:------------:|:-------:|:------------:|
-| **Loss** | 19 | **0.3768** | **0.3831** |
-| **Accuracy** | 19 | **0.8408** | **0.8401** |
-
----
-[RESULT] Few-shot accuracy: 0.3329
----
 
 ### Second Experiment
+#### First attempt
 
-**Model & Setup:**
-- Backbone: **ResNet18 (last block unfrozen)**  
-- Loss: **BCEWithLogits**  
-- Image size: **224** (resized)  
-- Seen classes: **90**  
-- Number of pairs per class: **100 positive + 100 negative**  
-- Total pairs generated for training: **17,998**  
-- Number of epochs: **50**  
-- Early stopping patience: **10**  
-- Wall time: **1h 29min 25s** 
+
+**Description**:
+- Model: Resnet18 + BCEWithLogits
+- Image Size: 224 (original)
+- Seen classes: 90
+- Number of pairs per class: 100 positive + 100 negative
+- Total pairs generated for training: 17998
+- Number of epochs: 50
+- Early stopping patience: 10
+- Best epoch: Epoch [12/50] --> Train Loss: 0.5362, Train Acc: 0.7338 | Val Loss: 0.5425, Val Acc: 0.7248
+- time: 1h 29min 25s
+
+**Results**:
+- Few-shot accuracy: 0.3888
+- Distance-based Few-shot Accuracy: 0.3731
+- Cosine similarity Few-shot Accuracy: 0.4033
+---
+![Training and Validation Accuracy & Loss](./images/sec_exp_f_a.png)  
+
+#### Second attempt
+
+**Description**:
+  - Model: Resnet18 + BCEWithLogits (freeze all layers)
+  - Image Size: 224 (original)
+  - Seen classes: 90
+  - Number of pairs per class: 100 positive + 100 negative
+  - Total pairs generated for training: 17998
+  - Number of epochs: 50
+  - Early stopping patience: 10
+  - Best epoch: Epoch [43/50] --> Train Loss: 0.6046, Train Acc: 0.6629 | Val Loss: 0.5375, Val Acc: 0.7538
+  - time: 3h 22min 43s
+
+**Results**:
+- Distance-based Few-shot Accuracy: 0.3978
+- Cosine similarity Few-shot Accuracy: 0.4175
 
 ---
-
-#### Training Results
-
-**1. Accuracy and Loss Curves**
-
-![Training and Validation Accuracy & Loss](./images/50e_10p_100p.png)  
-*Figure 1: Training and validation accuracy/loss over epochs.*
-
-**2. Epoch-wise Training Details**
-
-![Epoch-wise Training Log](./images/training_50e_10p_100p.png)  
-*Figure 2: Epoch-wise log showing train and validation loss and accuracy.*
-
----
-### Best Model Summary
-
-| Metric | Best Epoch | Train | Validation |
-|:-------|:------------:|:-------:|:------------:|
-| **Loss** | 12 | **0.5362** | **0.5425** |
-| **Accuracy** | 12 | **0.7338** | **0.7248** |
-
----
-**[RESULT] Few-shot accuracy: 0.3888**
----
-
-
+![Training and Validation Accuracy & Loss](./images/sec_exp_s_a.png)  
 
 ### Third Experiment
 
-**Model & Setup:**
-- Model: ResNet18 (Layer 4 Unfrozen) + BCEWithLogits  
-- Image Size: 224  
-- Seen Classes: 90  
-- Number of pairs per class: 300 positive + 300 negative  
-- Total pairs generated for training: 53,979  
-- Number of epochs: 30  
-- Early stopping patience: 10  
-- Wall time: 5h 57min 42s  
+#### First Attempt
+
+**Description**
+- Model: CNN  
+- Image Size: 32 (original)  
+- Seen classes: 90  
+- Number of pairs per class: 400 positive + 400 negative  
+- Total pairs generated for training: 71,956  
+- Number of epochs: 100  
+- Early stopping patience: 15  
+- Best epoch: Epoch [84/150] → Train Loss: 0.4506, Train Acc: 0.7833 | Val Loss: 0.4717, Val Acc: 0.7742  
+- Time: 4h 43min 41s  
+
+**Results**
+- Few-shot accuracy: 0.3083  
+- Distance-based Few-shot Accuracy: 0.3175  
+- Cosine similarity Few-shot Accuracy: 0.3603  
+
+![Training and Validation Accuracy & Loss](./images/th_exp_f_a.png)  
+---
+
+#### Second Attempt
+
+**Description**
+- Model: CNN  
+- Image Size: 32 (original)  
+- Seen classes: 80  
+- Number of pairs per class: 400 positive + 400 negative  
+- Total pairs generated for training: 63,967  
+- Number of epochs: 130  
+- Early stopping patience: 15  
+- Best epoch: Epoch [76/140] → Train Loss: 0.4540, Train Acc: 0.7804 | Val Loss: 0.4919, Val Acc: 0.7564  
+- Time: 3h 29min 8s  
+
+**Results**
+- Few-shot accuracy: 0.2026  
+- Distance-based Few-shot Accuracy: 0.2339  
+- Cosine similarity Few-shot Accuracy: 0.2615  
+
+![Training and Validation Accuracy & Loss](./images/th_exp_s_a.png)  
+---
+
+#### Third Attempt
+
+**Description**
+- Model: CNN  
+- Image Size: 32 (original)  
+- Seen classes: 50  
+- Number of pairs per class: 500 positive + 500 negative  
+- Total pairs generated for training: 49,963  
+- Number of epochs: 150  
+- Early stopping patience: 20  
+- Best epoch: Epoch [69/140] → Train Loss: 0.3887, Train Acc: 0.8206 | Val Loss: 0.4446, Val Acc: 0.7944  
+- Time: 2h 29min 49s  
+
+**Results**
+- Few-shot accuracy: 0.0778  
+- Distance-based Few-shot Accuracy: 0.0970  
+- Cosine similarity Few-shot Accuracy: 0.1151  
+![Training and Validation Accuracy & Loss](./images/th_exp_t_a.png)  
 
 ---
 
-### Training Results
 
-**1. Accuracy and Loss Curves**
+### Fourth Experiment
 
-![Training and Validation Accuracy & Loss](./images/third_expr_result.png)  
-*Figure 3: Training and validation accuracy/loss over epochs with the best epoch marked.*
-
-**2. Epoch-wise Training Details**
-
-![Epoch-wise Training Log](./images/third_expr.png)  
-*Figure 4: Epoch-wise log showing train and validation loss and accuracy progression.*
-
----
-
-### Best Model Summary
-
-| Metric | Best Epoch | Train | Validation |
-|:-------|:------------:|:-------:|:------------:|
-| **Loss** | 25 | 0.3017 | **0.3450** |
-| **Accuracy** | 25 | 0.8791 | **0.8625** |
----
-**[RESULT] Few-shot accuracy: 0.3693**
----
-
-### fourth Experiment 
-
-**Model & Setup:**
+**Description**
 - Model: ResNet18 + BCEWithLogits  
 - Image Size: 224  
-- Seen Classes: 80  
+- Seen classes: 80  
 - Number of pairs per class: 350 positive + 350 negative  
 - Total pairs generated for training: 55,970  
 - Number of epochs: 30  
-- Early stopping patience: 10 
-- Wall time: 6h 30min 25s   
+- Early stopping patience: 10  
+- Best epoch: Epoch [29/30] → Train Loss: 0.2800, Train Acc: 0.8902 | Val Loss: 0.3525, Val Acc: 0.8698  
+- Time: Unknown  
 
+**Results**
+- Few-shot accuracy: 0.2902  
+
+![Training and Validation Accuracy & Loss](./images/fourth_exp.png)  
 ---
 
-### Training Results
 
-**1. Accuracy and Loss Curves**
-
-![Training and Validation Accuracy & Loss](./images/30e_80s.png)  
-*Figure 5: Training and validation accuracy/loss curves with the best epoch marked.*
-
-**2. Epoch-wise Training Details**
-
-![Epoch-wise Training Log](./images/30e_80s_logs.png)  
-*Figure 6: Epoch-wise log showing train and validation loss and accuracy progression.*
-
----
-
-### Best Model Summary
-
-| Metric | Best Epoch | Train | Validation |
-|:-------|:------------:|:-------:|:------------:|
-| **Loss** | 29 | 0.2800 | **0.3525** |
-| **Accuracy** | 29 | 0.8902 | **0.8698** |
-
----
-
-**[RESULT] Few-shot accuracy: 0.2902**
-
----
 
 ### Fifth Experiment
 
-**Model & Setup:**
-- Model: Siamese CNN + Contrastive Loss  
-- Image Size: 32 (original)  
-- Seen Classes: 50  
-- Number of pairs per class: 300 positive + 300 negative  
-- Total pairs generated for training: 29,994  
-- Number of epochs: 50  
+#### First Attempt
+
+**Description**
+- Model: ResNet18 + Contrastive Loss  
+- Image Size: 224  
+- Seen classes: 80  
+- Number of pairs per class: 100 positive + 100 negative  
+- Total pairs generated for training: 15,999  
+- Number of epochs: 30  
 - Early stopping patience: 10  
-- Wall time: 3h 4min 23s  
+- Best epoch: Training (Contrastive) → Epoch [24/30] → Train Loss: 0.4259, Train Acc: 0.6585 | Val Loss: 0.4115, Val Acc: 0.6954  
+- Time: Unknown  
+
+**Results**
+- Few-shot accuracy (contrastive embeddings): 0.3132  
+
+![Training and Validation Accuracy & Loss](./images/fifth_exp_f_a.png)  
+---
+
+#### Second Attempt
+
+**Description**
+- Model: CNN + Contrastive Loss  
+- Image Size: 32  
+- Seen classes: 90  
+- Number of pairs per class: 300 positive + 300 negative  
+- Total pairs generated for training: 53,973  
+- Number of epochs: 120  
+- Early stopping patience: 15  
+- Best epoch: Training (Contrastive) → Epoch [118/120] → Train Loss: 0.3445, Train Acc: 0.7512 | Val Loss: 0.3483, Val Acc: 0.7404  
+- Time: Unknown  
+
+**Results**
+- Distance-based Few-shot Accuracy: 0.3132  
+- Cosine similarity Few-shot Accuracy: 0.3284  
+
 
 ---
 
-### Training Results
+## Summary of Experimental Results and Visualization
+![Few-Shot Experiment Results](images/results1.png)
 
-**1. Accuracy and Loss Curves**
-
-*(Replace with actual plot if available)*  
-
-![Training and Validation Accuracy & Loss](./images/cnn.png)  
-*Figure 7: Training and validation accuracy/loss curves with the best epoch marked.*
-
-**2. Epoch-wise Training Details**
-
-*(Optional: you can include a table or image from your logs)*  
-
-![Epoch-wise Training Log](./images/cnn_logs.png)  
-*Figure 8: Epoch-wise log showing train and validation loss and accuracy progression.*
-
----
-
-### Best Model Summary
-
-| Metric | Best Epoch | Train | Validation |
-|:-------|:-----------:|:------:|:----------:|
-| **Loss** | 18 | 0.4482 | **0.5518** |
-| **Accuracy** | 18 | 0.7974 | **0.6946** |
-
----
-
-**[RESULT] Few-shot accuracy: —**  
+![Few-Shot Experiment Results](images/results2.png)
 
 
-
+# The other experiments are on Google colab 
+[Colab Notebook](https://colab.research.google.com/drive/1RgxpvsU5lU0Wn1ABU6-2hNBb6uyfdXOR#scrollTo=7c028mnfg_2w)

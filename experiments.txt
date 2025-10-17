@@ -1,0 +1,148 @@
+First Experiment:
+    Description:
+        Model: Resnet18 + BCEWithLogits
+        Image Size: 224
+        Seen classes: 90
+        Number of pairs per class: 300 positive + 300 negative
+        Total pairs generated for training: 53979
+        Number of epochs: 30
+        Early stopping patience: 10
+        Best epoch: Epoch [25/30] --> Train Loss: 0.3017, Train Acc: 0.8791 | Val Loss: 0.3450, Val Acc: 0.8625
+        time: 5h 57min 42s
+    Results:
+        Few-shot accuracy: 0.3693
+        Distance-based Few-shot Accuracy: 0.3907
+        Cosine similarity Few-shot Accuracy: 0.3830
+
+    
+Second Experiment:
+    First attempt: 
+        Description:
+            Model: Resnet18 + BCEWithLogits
+            Image Size: 224 (original)
+            Seen classes: 90
+            Number of pairs per class: 100 positive + 100 negative
+            Total pairs generated for training: 17998
+            Number of epochs: 50
+            Early stopping patience: 10
+            Best epoch: Epoch [12/50] --> Train Loss: 0.5362, Train Acc: 0.7338 | Val Loss: 0.5425, Val Acc: 0.7248
+            time: 1h 29min 25s
+        Results:
+            Few-shot accuracy: 0.3888
+            Distance-based Few-shot Accuracy: 0.3731
+            Cosine similarity Few-shot Accuracy: 0.4033
+    
+    Second attempt:
+        Description:
+            Model: Resnet18 + BCEWithLogits (freeze all layers)
+            Image Size: 224 (original)
+            Seen classes: 90
+            Number of pairs per class: 100 positive + 100 negative
+            Total pairs generated for training: 17998
+            Number of epochs: 50
+            Early stopping patience: 10
+            Best epoch: Epoch [43/50] --> Train Loss: 0.6046, Train Acc: 0.6629 | Val Loss: 0.5375, Val Acc: 0.7538
+            time: 3h 22min 43s
+        Results:
+            Distance-based Few-shot Accuracy: 0.3978
+            Cosine similarity Few-shot Accuracy: 0.4175
+
+Third experiment:
+    First Attempt:
+        Description:
+            Model: CNN
+            Image Size: 32 (original)
+            Seen classes: 90
+            Number of pairs per class: 400 positive + 400 negative
+            Total pairs generated for training: 71956
+            Number of epochs: 15  0
+            Early stopping patience: 15
+            Best epoch: Epoch [84/150] --> Train Loss: 0.4506, Train Acc: 0.7833 | Val Loss: 0.4717, Val Acc: 0.7742
+            time: 4h 43min 41s
+        Results:
+            Few-shot accuracy: 0.3083
+            Distance-based Few-shot Accuracy: 0.3175
+            Cosine similarity Few-shot Accuracy: 0.3603
+        
+    Second Attempt:
+        Description:
+            Model: CNN
+            Image Size: 32 (original)
+            Seen classes: 80
+            Number of pairs per class: 400 positive + 400 negative
+            Total pairs generated for training: 63967
+            Number of epochs: 130
+            Early stopping patience: 15
+            Best epoch: Epoch [76/140] --> Train Loss: 0.4540, Train Acc: 0.7804 | Val Loss: 0.4919, Val Acc: 0.7564
+            time: 3h 29min 8s
+        Results:
+            Few-shot accuracy: 0.2026
+            Distance-based Few-shot Accuracy: 0.2339
+            Cosine similarity Few-shot Accuracy: 0.2615
+    Third attempt:
+        Description:
+            Model: CNN
+            Image Size: 32 (original)
+            Seen classes: 50
+            Number of pairs per class: 500 positive + 500 negative
+            Total pairs generated for training: 49963
+            Number of epochs: 150
+            Early stopping patience: 20
+            best epoch: Epoch [69/140] --> Train Loss: 0.3887, Train Acc: 0.8206 | Val Loss: 0.4446, Val Acc: 0.7944
+            time: 2h 29min 49s
+        Results:
+            Few-shot accuracy: 0.0778
+            Distance-based Few-shot Accuracy: 0.0970
+            Cosine similarity Few-shot Accuracy: 0.1151
+
+fourth experiment:
+    Description:
+        Model: Resnet18 + BCEWithLogits
+        Image Size: 224
+        Seen classes: 80
+        Number of pairs per class: 350 positive + 350 negative
+        Total pairs generated for training: 55970
+        Number of epochs: 30
+        Early stopping patience: 10
+        Best epoch: Epoch [29/30] --> Train Loss: 0.2800, Train Acc: 0.8902 | Val Loss: 0.3525, Val Acc: 0.8698
+        time: unknown
+    Results: 
+        Few-shot accuracy: 0.2902
+    
+Fifth experiment:
+    First attempt:
+        Description:
+            Model: Resnet18 + Contrastive Loss
+            Image Size: 224
+            Seen classes: 80
+            Number of pairs per class: 100 positive + 100 negative
+            Total pairs generated for training: 15999
+            Number of epochs: 30
+            Early stopping patience: 10
+            Best epoch: Training (Contrastive):  80%|████████  | 24/30 [1:24:09<21:02, 210.42s/it]Epoch [24/30] --> Train Loss: 0.4259, Train Acc: 0.6585 | Val Loss: 0.4115, Val Acc: 0.6954
+            time: unknown
+        Results:
+            Few-shot accuracy (contrastive embeddings): 0.3132
+
+
+
+    Second attempt:
+        Description:
+            Model: CNN + Contrastive Loss
+            Image Size: 32
+            Seen classes: 90
+            Number of pairs per class: 300 positive + 300 negative
+            Total pairs generated for training: 53973
+            Number of epochs: 120
+            Early stopping patience: 15
+            Best epoch: Training (Contrastive):  98%|█████████▊| 118/120 [3:55:36<03:52, 116.23s/it]Epoch [118/120] --> Train Loss: 0.3445, Train Acc: 0.7512 | Val Loss: 0.3483, Val Acc: 0.7404
+            time: unknown
+        Results:
+            Distance-based Few-shot Accuracy: 0.3132
+            Cosine similarity Few-shot Accuracy: 0.3284
+
+
+    
+
+
+    
