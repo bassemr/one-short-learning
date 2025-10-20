@@ -1,25 +1,42 @@
 First Experiment:
-    Description:
-        Model: Resnet18 + BCEWithLogits
-        Image Size: 224
-        Seen classes: 90
-        Number of pairs per class: 300 positive + 300 negative
-        Total pairs generated for training: 53979
-        Number of epochs: 30
-        Early stopping patience: 10
-        Best epoch: Epoch [25/30] --> Train Loss: 0.3017, Train Acc: 0.8791 | Val Loss: 0.3450, Val Acc: 0.8625
-        time: 5h 57min 42s
-    Results:
-        Few-shot accuracy: 0.3693
-        Distance-based Few-shot Accuracy: 0.3907
-        Cosine similarity Few-shot Accuracy: 0.3830
-
+    First attempt:
+        Description:
+            Model: Resnet18 + BCEWithLogits. (freeze until layer 4)
+            Image Size: 224
+            Seen classes: 90
+            Number of pairs per class: 300 positive + 300 negative
+            Total pairs generated for training: 53979
+            Number of epochs: 30
+            Early stopping patience: 10
+            Best epoch: Epoch [25/30] --> Train Loss: 0.3017, Train Acc: 0.8791 | Val Loss: 0.3450, Val Acc: 0.8625
+            time: 5h 57min 42s
+        Results:
+            Few-shot accuracy: 0.3693
+            Distance-based Few-shot Accuracy: 0.3907
+            Cosine similarity Few-shot Accuracy: 0.3830
+    
+    Second attempt:
+        Description:
+            Model: Resnet18 + BCEWithLogits. (freeze until layer 4)
+            Image Size: 224
+            Seen classes: 80
+            Number of pairs per class: 300 positive + 300 negative
+            Total pairs generated for training: 47985
+            Number of epochs: 60
+            Early stopping patience: 10
+            Best epoch: Epoch [25/30] --> Train Loss: 0.3017, Train Acc: 0.8791 | Val Loss: 0.3450, Val Acc: 0.8625
+            time: 7h 9min 18s
+        Results:
+            Few-shot accuracy: 0.3693
+            Distance-based Few-shot Accuracy: 0.3907
+            Cosine similarity Few-shot Accuracy: 0.3830
+    
     
 Second Experiment:
     First attempt: 
         Description:
             Model: Resnet18 + BCEWithLogits
-            Image Size: 224 (original)
+            Image Size: 224 
             Seen classes: 90
             Number of pairs per class: 100 positive + 100 negative
             Total pairs generated for training: 17998
@@ -35,7 +52,7 @@ Second Experiment:
     Second attempt:
         Description:
             Model: Resnet18 + BCEWithLogits (freeze all layers)
-            Image Size: 224 (original)
+            Image Size: 224 
             Seen classes: 90
             Number of pairs per class: 100 positive + 100 negative
             Total pairs generated for training: 17998
@@ -55,7 +72,7 @@ Third experiment:
             Seen classes: 90
             Number of pairs per class: 400 positive + 400 negative
             Total pairs generated for training: 71956
-            Number of epochs: 15  0
+            Number of epochs: 100
             Early stopping patience: 15
             Best epoch: Epoch [84/150] --> Train Loss: 0.4506, Train Acc: 0.7833 | Val Loss: 0.4717, Val Acc: 0.7742
             time: 4h 43min 41s

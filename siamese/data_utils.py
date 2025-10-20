@@ -333,7 +333,7 @@ def create_support_query_split(dataset ):
     class_to_indices = {c: [] for c in classes}
     for idx, (_, label) in enumerate(dataset):
         if label in class_to_indices:
-            class_to_indices[label].append(idx)
+            class_to_indices[label].append(idx) # dict of list and each list contains label and idx 
 
     support_images, support_labels = [], []
     query_images, query_labels = [], []

@@ -158,9 +158,10 @@ This file contains **helper functions** for visualization and debugging, such as
 ## 🔬 Experiment
 
 ### First Experiment
+#### First attempt
 
 **Description**:
-- Model: Resnet18 + BCEWithLogits
+- Model: Resnet18 + BCEWithLogits.  (freeze until layer 4)
 - Image Size: 224
 - Seen classes: 90
 - Number of pairs per class: 300 positive + 300 negative
@@ -175,10 +176,55 @@ This file contains **helper functions** for visualization and debugging, such as
 - Distance-based Few-shot Accuracy: 0.3907
 - Cosine similarity Few-shot Accuracy: 0.3830
 
----
 
 ![Training and Validation Accuracy & Loss](./images/first_exp.png)  
+---
 
+#### Second attempt
+
+**Description**:
+- Model: Resnet18 + BCEWithLogits. (freeze until layer 4)
+- Image Size: 224
+- Seen classes: 80
+- Number of pairs per class: 300 positive + 300 negative
+- Total pairs generated for training: 47985
+- Number of epochs: 60
+- Early stopping patience: 10
+- Best epoch: Epoch [28/60] --> Train Loss: 0.3021, Train Acc: 0.8774 | Val Loss: 0.3445, Val Acc: 0.8658
+- time: 7h 9min 18s
+
+**Results**:
+- Distance-based Few-shot Accuracy: 0.3313
+- Cosine similarity Few-shot Accuracy: 0.3400
+
+---
+
+![Training and Validation Accuracy & Loss](./images/first_exp_s_a.png)  
+
+---
+
+#### Third attempt
+
+**Description**:
+- Model: Resnet18 + BCEWithLogits. (freeze until layer 4)
+- Image Size: 224
+- Seen classes: 50
+- Number of pairs per class: 300 positive + 300 negative
+- Total pairs generated for training: 29984
+- Number of epochs: 60
+- Early stopping patience: 15
+- Best epoch: Epoch [32/60] --> Train Loss: 0.2558, Train Acc: 0.9018 | Val Loss: 0.3263, Val Acc: 0.8806
+- time: 5h 36min 20s
+
+**Results**:
+- Distance-based Few-shot Accuracy: 0.1226
+- Cosine similarity Few-shot Accuracy: 0.1251
+
+---
+
+![Training and Validation Accuracy & Loss](./images/first_exp_t_a.png)  
+
+---
 
 ### Second Experiment
 #### First attempt
@@ -186,7 +232,7 @@ This file contains **helper functions** for visualization and debugging, such as
 
 **Description**:
 - Model: Resnet18 + BCEWithLogits
-- Image Size: 224 (original)
+- Image Size: 224 
 - Seen classes: 90
 - Number of pairs per class: 100 positive + 100 negative
 - Total pairs generated for training: 17998
@@ -206,7 +252,7 @@ This file contains **helper functions** for visualization and debugging, such as
 
 **Description**:
   - Model: Resnet18 + BCEWithLogits (freeze all layers)
-  - Image Size: 224 (original)
+  - Image Size: 224 
   - Seen classes: 90
   - Number of pairs per class: 100 positive + 100 negative
   - Total pairs generated for training: 17998
@@ -220,7 +266,48 @@ This file contains **helper functions** for visualization and debugging, such as
 - Cosine similarity Few-shot Accuracy: 0.4175
 
 ---
-![Training and Validation Accuracy & Loss](./images/sec_exp_s_a.png)  
+![Training and Validation Accuracy & Loss](./images/sec_exp_s_a.png) 
+--- 
+#### Third attempt
+
+**Description**:
+  - Model: Resnet18 + BCEWithLogits (freeze all layers)
+  - Image Size: 224 
+  - Seen classes: 80
+  - Number of pairs per class: 100 positive + 100 negative
+  - Total pairs generated for training: 15998
+  - Number of epochs: 50
+  - Early stopping patience: 10
+  - Best epoch: Epoch [49/50] --> Train Loss: 0.5977, Train Acc: 0.6750 | Val Loss: 0.5296, Val Acc: 0.7461
+  - time: 2h 54min 56s
+
+**Results**:
+- Distance-based Few-shot Accuracy: 0.3129
+- Cosine similarity Few-shot Accuracy: 0.3237
+
+---
+![Training and Validation Accuracy & Loss](./images/sec_exp_t_a.png) 
+--- 
+#### Fourth attempt
+
+**Description**:
+  - Model: Resnet18 + BCEWithLogits (freeze all layers)
+  - Image Size: 224 
+  - Seen classes: 50
+  - Number of pairs per class: 100 positive + 100 negative
+  - Total pairs generated for training: 10000
+  - Number of epochs: 100
+  - Early stopping patience: 15
+  - Best epoch: Epoch [64/100] --> Train Loss: 0.5728, Train Acc: 0.6943 | Val Loss: 0.4766, Val Acc: 0.7960
+  - time: 2h 54min 24s
+
+**Results**:
+- Distance-based Few-shot Accuracy: 0.1396
+- Cosine similarity Few-shot Accuracy: 0.1455
+
+---
+![Training and Validation Accuracy & Loss](./images/sec_exp_fo_a.png) 
+--- 
 
 ### Third Experiment
 
