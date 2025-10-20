@@ -438,10 +438,11 @@ This file contains **helper functions** for visualization and debugging, such as
 ---
 
 ## Summary of Experimental Results and Visualization
-![Few-Shot Experiment Results](images/results1.png)
+![Few-Shot Experiment Results seen classes 50](images/results_50.png)
+![Few-Shot Experiment Results seen classes 80](images/results_80.png)
+![Few-Shot Experiment Results seen classes 90](images/results_90.png)
 
-![Few-Shot Experiment Results](images/results2.png)
-
+---
 
 # The other experiments are on Google colab 
 [Colab Notebook](https://colab.research.google.com/drive/1RgxpvsU5lU0Wn1ABU6-2hNBb6uyfdXOR#scrollTo=7c028mnfg_2w)
