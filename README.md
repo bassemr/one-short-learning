@@ -230,6 +230,46 @@ Full details for each run are in [`experiments.txt`](experiments.txt) and in the
 
 ---
 
+## 🛠️ Tech Stack
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)
+![Torchvision](https://img.shields.io/badge/Torchvision-EE4C2C?style=flat&logo=pytorch&logoColor=white)
+![Google Colab](https://img.shields.io/badge/Google%20Colab-F9AB00?style=flat&logo=googlecolab&logoColor=white)
+![CUDA GPU](https://img.shields.io/badge/CUDA%20GPU-76B900?style=flat&logo=nvidia&logoColor=white)
+![TensorBoard](https://img.shields.io/badge/TensorBoard-FF6F00?style=flat&logo=tensorflow&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat&logo=numpy&logoColor=white)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=flat)
+![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=flat&logo=jupyter&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
+
+---
+
+## 🎓 Skills & Concepts Applied
+
+**Deep Learning & Computer Vision**
+- **Convolutional Neural Networks (CNNs):** designed a 3-block CNN from scratch (convolution, batch normalization, ReLU, max pooling, fully connected layers, dropout)
+- **ResNet-18 and transfer learning:** used ImageNet-pretrained weights, compared a frozen backbone with partial fine-tuning (`layer4`)
+- **Siamese networks and metric learning:** shared-weight encoders that learn an embedding space where similar images are close
+- **Few-shot / one-shot learning:** N-way 1-shot evaluation with support and query sets on classes never seen during training
+- **Loss functions:** binary cross-entropy with logits and contrastive loss (implemented from scratch)
+- **Similarity metrics:** Euclidean distance and cosine similarity between embeddings
+
+**Training & Experimentation**
+- Data augmentation (random crop, flip, rotation, color jitter) and normalization
+- Balanced positive/negative pair generation and train/validation splitting by class
+- Adam optimizer, weight decay, dropout and **early stopping** to control overfitting
+- **GPU training** on Google Colab, with memory-safe batched evaluation (chunking to avoid out-of-memory errors)
+- Experiment tracking with **TensorBoard** and a structured log of 13 runs
+- Reading training curves to diagnose overfitting and comparing models fairly
+
+**Software Engineering**
+- Modular, reusable PyTorch code (separate data, model, training and evaluation modules)
+- Custom `Dataset` and `DataLoader` classes
+- Version control with Git and GitHub; reproducible runs with fixed random seeds
+
+---
+
 ## 📚 References
 - G. Koch, R. Zemel, R. Salakhutdinov — *Siamese Neural Networks for One-shot Image Recognition* (2015)
 - R. Hadsell, S. Chopra, Y. LeCun — *Dimensionality Reduction by Learning an Invariant Mapping* (2006), contrastive loss
